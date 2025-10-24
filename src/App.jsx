@@ -1,20 +1,13 @@
 import React from 'react'
 import './App.scss'
+import Header from './components/common/Header.jsx'
 
-
-
-
-class App extends React.Component {
-
-
-  render() {
-    return (
-      <div className='app-container'>
-        <h1> Vite + React</h1>
-      </div >
-
-    )
-  }
+const App = () => {
+  return (
+    <div>
+      <Header />
+    </div>
+  )
 }
 
 
