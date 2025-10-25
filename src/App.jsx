@@ -1,14 +1,14 @@
 import React from 'react'
 import './App.scss'
-import Header from './components/common/Header.jsx'
+import UserLayout from './layouts/UserLayout.jsx'
 
 const App = () => {
   return (
     <div>
-      <Header />
+      <UserLayout />
     </div>
   )
 }
 
 
-export default App
+export default App;
