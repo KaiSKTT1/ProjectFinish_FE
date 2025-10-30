@@ -1,10 +1,15 @@
 import Button from "../ui/Button"
 import { ICONS } from "../../utils/ICONS"
+import { useNavigate } from "react-router-dom"
 
 const Header = () => {
-
+    const navigate = useNavigate();
     const YoutubeIcon = ICONS.youtube;
     const FacebookIcon = ICONS.facebook;
+
+    const handleLoginClick = () => {
+        navigate('/login'); // Chuyển sang trang login
+    };
 
     return (
         <header className="flex items-center justify-between p-4 bg-gray-800 text-white">
@@ -23,7 +28,7 @@ const Header = () => {
             <div className="flex items-center gap-2">
                 <Button icon={<YoutubeIcon />} />
                 <Button icon={<FacebookIcon />} />
-                <Button title="About me" />
+                <Button title="Login" onClick={handleLoginClick} />
             </div>
         </header>
     )
