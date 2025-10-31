@@ -1,12 +1,13 @@
 import Footer from "../components/common/Footer"
 import Header from "../components/common/Header"
-import MainPage from "../pages/user/MainPage"
+import { Outlet } from "react-router-dom"
 
 const UserLayout = () => {
     return (
         <div>
             <Header />
-            <MainPage />
+            {/* Outlet sẽ render Page tương ứng với route */}
+            <Outlet />
             <Footer />
         </div>
     )

@@ -12,7 +12,6 @@ const MainPage = () => {
             try {
                 setLoading(true);
                 const data = await getCourses();
-                console.log('Courses data:', data); // Debug: xem structure của data
                 setCourses(data);
             } catch (error) {
                 console.error('Failed to fetch courses:', error);
@@ -32,7 +31,10 @@ const MainPage = () => {
             <div className="flex justify-around p-4">
                 {courses.length > 0 ? (
                     courses.slice(0, 3).map((course, index) => (
-                        <ItemCourse key={course.id || index} course={course} />
+                        <ItemCourse
+                            key={course.id || course.courseId || course.code || index}
+                            course={course}
+                        />
                     ))
                 ) : "Không có giá trị"}
             </div>
