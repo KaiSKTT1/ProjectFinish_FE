@@ -1,15 +1,53 @@
 import Button from "../ui/Button"
 import { ICONS } from "../../utils/ICONS"
 import { useNavigate } from "react-router-dom"
+import Menu from "./Menu"
+import { getCategories } from "../../services/categoryService"
+import { useEffect, useState } from "react"
 
 const Header = () => {
     const navigate = useNavigate();
     const YoutubeIcon = ICONS.youtube;
     const FacebookIcon = ICONS.facebook;
+    const token = localStorage.getItem('token');
+    const [categories, setCategories] = useState([]);
 
     const handleLoginClick = () => {
         navigate('/login'); // Chuyển sang trang login
     };
+
+    const handleCartClick = () => {
+        navigate('/cart'); // Chuyển sang trang giỏ hàng
+    };
+
+    const handleLogoutClick = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userScope');
+        navigate('/'); // Chuyển về trang chủ
+    }
+
+    const fetchCategories = async () => {
+        try {
+            const data = await getCategories();
+            console.log('Categories data:', data); // Debug
+            // Kiểm tra nếu data là object có property result (như CourseResponse)
+            if (data.result && Array.isArray(data.result)) {
+                setCategories(data.result);
+            } else {
+                console.error('Categories is not an array:', data);
+                setCategories([]);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            setCategories([]);
+        }
+    }
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+
 
     return (
         <header className="flex items-center justify-between p-4 bg-gray-800 text-white">
@@ -17,7 +55,9 @@ const Header = () => {
             <div className="flex items-center gap-4">
                 <h1 className="text-xl font-bold">My Application</h1>
                 <nav className="flex items-center gap-2">
-                    <Button title="Khóa học" />
+                    <Button
+                        title="Khóa học"
+                        menu={<Menu categories={categories} />} />
                     <Button title="Review" />
                     <Button title="Tư vấn" />
                     <Button title="Donate" />
@@ -28,7 +68,15 @@ const Header = () => {
             <div className="flex items-center gap-2">
                 <Button icon={<YoutubeIcon />} />
                 <Button icon={<FacebookIcon />} />
-                <Button title="Login" onClick={handleLoginClick} />
+
+                {token ? (
+                    <>
+                        <Button title="Giỏ hàng" onClick={handleCartClick} />
+                        <Button title="Logout" onClick={handleLogoutClick} />
+                    </>
+                ) : (
+                    <Button title="Login" onClick={handleLoginClick} />
+                )}
             </div>
         </header>
     )
