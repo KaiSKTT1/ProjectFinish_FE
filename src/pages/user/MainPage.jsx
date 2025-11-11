@@ -22,6 +22,10 @@ const MainPage = () => {
         fetchCourses();
     }, []);
 
+    const handleShowAllCourse = () => {
+        window.location.href = '/courses';
+    }
+
     if (loading) {
         return <div className="text-center p-4">Đang tải...</div>;
     }
@@ -40,7 +44,7 @@ const MainPage = () => {
             </div>
 
             <div className="flex justify-center mt-4">
-                <Button title=">>Xem tất cả khóa học<<" />
+                <Button onClick={handleShowAllCourse} title=">>Xem tất cả khóa học<<" />
             </div>
         </>
     )

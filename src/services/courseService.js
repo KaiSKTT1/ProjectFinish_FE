@@ -31,3 +31,9 @@ export const deleteCourse = async (id) => {
     const response = await api.delete(`/courses/${id}`)
     return response.data
 }
+
+// Get courses by category ID
+export const getCoursesByCategory = async (categoryId, categoryName) => {
+    const response = await api.get(`/courses/${categoryName}/${categoryId}`);
+    return response.data.courseResponse || response.data.result.courseResponse;
+};

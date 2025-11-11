@@ -26,13 +26,21 @@ const Header = () => {
         navigate('/'); // Chuyển về trang chủ
     }
 
+    const handleLogoClick = () => {
+        navigate('/'); // Chuyển về trang chủ
+    }
+
     const fetchCategories = async () => {
         try {
             const data = await getCategories();
             console.log('Categories data:', data); // Debug
             // Kiểm tra nếu data là object có property result (như CourseResponse)
             if (data.result && Array.isArray(data.result)) {
+                console.log('Categories result:', data.result); // Debug từng category
                 setCategories(data.result);
+            } else if (Array.isArray(data)) {
+                console.log('Categories array:', data); // Debug từng category
+                setCategories(data);
             } else {
                 console.error('Categories is not an array:', data);
                 setCategories([]);
@@ -53,7 +61,12 @@ const Header = () => {
         <header className="flex items-center justify-between p-4 bg-gray-800 text-white">
             {/* Left section - Logo + Navigation */}
             <div className="flex items-center gap-4">
-                <h1 className="text-xl font-bold">My Application</h1>
+                <h1
+                    className="text-xl font-bold cursor-pointer hover:text-blue-400 transition-colors"
+                    onClick={handleLogoClick}
+                >
+                    My Application
+                </h1>
                 <nav className="flex items-center gap-2">
                     <Button
                         title="Khóa học"

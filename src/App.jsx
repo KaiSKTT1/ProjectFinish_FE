@@ -6,6 +6,8 @@ import AuthLayout from './layouts/AuthLayout.jsx'
 import AdminLoginPage from './pages/admin/AdminLoginPage.jsx'
 import MainPage from './pages/user/MainPage.jsx'
 import DetailCourse from './pages/user/DetailCourse.jsx'
+import CoursesPage from './pages/user/CoursesPage.jsx'
+import CoursesOfCategory from './pages/user/CoursesOfCategory.jsx'
 
 const App = () => {
   return (
@@ -15,6 +17,12 @@ const App = () => {
         <Route path="/" element={<UserLayout />}>
           {/* Trang chủ */}
           <Route index element={<MainPage />} />
+
+          {/* Trang tất cả khóa học */}
+          <Route path="courses" element={<CoursesPage />} />
+
+          {/* Trang khóa học theo category */}
+          <Route path="courses/:name/:id" element={<CoursesOfCategory />} />
 
           {/* Trang chi tiết khóa học */}
           <Route path="courses/:id" element={<DetailCourse />} />

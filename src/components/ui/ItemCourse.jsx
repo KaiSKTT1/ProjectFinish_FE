@@ -23,9 +23,10 @@ const ItemCourse = ({ course, onClick }) => {
     }
 
     return (
-        <div onClick={handleClickShowDetail} className="cursor-pointer hover:shadow-lg p-4">
+        <div onClick={handleClickShowDetail} className="cursor-pointer hover:shadow-lg hover:bg-gray-300 p-4">
             <H3>
                 <span>{course.category?.name || course.category}</span>
+                <hr />
                 <span>{course.name}</span>
             </H3>
             <H4>{course.description}</H4>
