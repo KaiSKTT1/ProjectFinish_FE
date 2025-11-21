@@ -8,15 +8,22 @@ const LoginPage = () => {
 
     const handleUserLogin = async (credentials) => {
         try {
-            // Call API login
+            // Call API login - response.data.result = {token, authenticated}
             const response = await login(credentials);
 
+            // Lấy token từ response
+            const token = response.token;
+
+            if (!token) {
+                throw new Error('Token không tồn tại trong response');
+            }
+
             // Decode JWT để lấy role
-            const decoded = jwtDecode(response.token);
+            const decoded = jwtDecode(token);
 
             // Lưu token và scope (chứa roles)
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('userScope', decoded.scope); // Lưu cả scope
+            localStorage.setItem('token', token);
+            localStorage.setItem('userScope', decoded.scope);
 
             // Redirect về trang chủ user
             navigate('/');

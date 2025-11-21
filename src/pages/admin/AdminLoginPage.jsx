@@ -8,11 +8,18 @@ const AdminLoginPage = () => {
 
     const handleAdminLogin = async (credentials) => {
         try {
-            // Call API login
+            // Call API login - response.data.result = {token, authenticated}
             const response = await login(credentials);
 
+            // Lấy token từ response
+            const token = response.token;
+
+            if (!token) {
+                throw new Error('Token không tồn tại trong response');
+            }
+
             // Decode JWT để lấy thông tin
-            const decoded = jwtDecode(response.token);
+            const decoded = jwtDecode(token);
 
             // Kiểm tra scope có chứa ROLE_ADMIN không
             const hasAdminRole = decoded.scope?.includes('ROLE_ADMIN');
@@ -22,7 +29,7 @@ const AdminLoginPage = () => {
             }
 
             // Lưu token
-            localStorage.setItem('token', response.token);
+            localStorage.setItem('token', token);
             localStorage.setItem('userRole', 'ROLE_ADMIN');
 
             // Redirect về trang admin dashboard

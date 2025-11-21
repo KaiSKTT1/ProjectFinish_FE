@@ -4,13 +4,26 @@ import { useNavigate } from "react-router-dom"
 import Menu from "./Menu"
 import { getCategories } from "../../services/categoryService"
 import { useEffect, useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { fetchCart } from "../../store/cartSlice"
 
 const Header = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const YoutubeIcon = ICONS.youtube;
     const FacebookIcon = ICONS.facebook;
     const token = localStorage.getItem('token');
     const [categories, setCategories] = useState([]);
+
+    // Lấy cart count từ Redux store
+    const cartCount = useSelector((state) => state.cart.count);
+
+    useEffect(() => {
+        // Load cart khi component mount (nếu có token)
+        if (token) {
+            dispatch(fetchCart());
+        }
+    }, [dispatch, token]);
 
     const handleLoginClick = () => {
         navigate('/login'); // Chuyển sang trang login
@@ -84,7 +97,15 @@ const Header = () => {
 
                 {token ? (
                     <>
-                        <Button title="Giỏ hàng" onClick={handleCartClick} />
+                        {/* Cart button with badge */}
+                        <div className="relative">
+                            <Button title="Giỏ hàng" onClick={handleCartClick} />
+                            {cartCount > 0 && (
+                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+                                    {cartCount}
+                                </span>
+                            )}
+                        </div>
                         <Button title="Logout" onClick={handleLogoutClick} />
                     </>
                 ) : (

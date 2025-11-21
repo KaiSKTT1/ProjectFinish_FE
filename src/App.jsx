@@ -8,6 +8,8 @@ import MainPage from './pages/user/MainPage.jsx'
 import DetailCourse from './pages/user/DetailCourse.jsx'
 import CoursesPage from './pages/user/CoursesPage.jsx'
 import CoursesOfCategory from './pages/user/CoursesOfCategory.jsx'
+import CartPage from './pages/user/CartPage.jsx'
+import MyCoursesPage from './pages/user/MyCoursesPage.jsx'
 
 const App = () => {
   return (
@@ -26,6 +28,12 @@ const App = () => {
 
           {/* Trang chi tiết khóa học */}
           <Route path="courses/:id" element={<DetailCourse />} />
+
+          {/* Trang giỏ hàng */}
+          <Route path="cart" element={<CartPage />} />
+
+          {/* Trang khóa học của tôi */}
+          <Route path="my-courses" element={<MyCoursesPage />} />
         </Route>
 
         {/* Trang login user - AuthLayout */}
