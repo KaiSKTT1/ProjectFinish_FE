@@ -7,10 +7,15 @@ export const getCourse = async (id) => {
     return response.data.result || response.data
 }
 
-// Get all courses
-export const getCourses = async () => {
-    const response = await api.get('/courses')
-    // Xử lý response structure ở đây - Component không cần lo
+// Get all courses WITH pagination (backend page starts from 1)
+export const getCourses = async (page = 1, size = 10, sort = ['name', 'asc']) => {
+    const response = await api.get('/courses', {
+        params: {
+            page,    // Backend expects page starting from 1
+            size,
+            sort    // Backend expects array like ['name', 'asc']
+        }
+    })
     return response.data.result || response.data
 }
 

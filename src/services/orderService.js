@@ -24,6 +24,14 @@ export const getMyOrders = async () => {
     }
 };
 
+// Lấy tất cả đơn hàng (Admin)
+export const getAllOrders = async (page = 1, size = 10) => {
+    const response = await api.get('/orders', {
+        params: { page, size }
+    });
+    return response.data.result || response.data;
+};
+
 // Lấy chi tiết một đơn hàng
 export const getOrderById = async (orderId) => {
     try {

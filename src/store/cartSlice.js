@@ -7,8 +7,12 @@ export const fetchCart = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const data = await getMyCart();
+            console.log("🛒 fetchCart API response:", data);
+            console.log("🛒 Is array?", Array.isArray(data));
+            console.log("🛒 Items count:", data?.length);
             return data; // [{addAt, course: {...}}, ...]
         } catch (error) {
+            console.error("❌ fetchCart error:", error);
             return rejectWithValue(error.response?.data?.message || 'Failed to fetch cart');
         }
     }

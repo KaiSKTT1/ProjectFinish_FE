@@ -14,14 +14,21 @@ const CartPage = () => {
     const cartItems = useSelector((state) => state.cart.items);
     const loading = useSelector((state) => state.cart.loading);
 
+    console.log("🛒 CartPage - cartItems from Redux:", cartItems);
+    console.log("🛒 CartPage - loading:", loading);
+
     const [total, setTotal] = useState(0);
     const [isProcessing, setIsProcessing] = useState(false);
 
     // Load cart từ Redux khi component mount
     useEffect(() => {
         const token = localStorage.getItem('token');
+        console.log("🔐 Token exists?", !!token);
         if (token) {
+            console.log("📦 Dispatching fetchCart...");
             dispatch(fetchCart());
+        } else {
+            console.warn("⚠️ No token found, cannot fetch cart");
         }
     }, [dispatch]);
 
@@ -259,8 +266,8 @@ const CartPage = () => {
                                     onClick={handleCheckout}
                                     disabled={isProcessing}
                                     className={`w-full py-3 rounded-lg font-semibold transition-colors ${isProcessing
-                                            ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                                        ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                                        : 'bg-blue-600 text-white hover:bg-blue-700'
                                         }`}
                                 >
                                     {isProcessing ? '⏳ Đang xử lý...' : '💳 Thanh toán'}
