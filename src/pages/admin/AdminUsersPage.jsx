@@ -1,26 +1,28 @@
 import { useState, useEffect } from "react";
 import { getAllUsers, deleteUser } from "../../services/userService";
+import { useSearchParams } from "react-router-dom";
 
 const AdminUsersPage = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
+    // Lấy page và size từ URL, mặc định page=1, size=10
+    const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
+    const sizeFromUrl = parseInt(searchParams.get('size') || '10', 10);
 
     useEffect(() => {
-        fetchUsers();
-    }, [currentPage]);
+        fetchUsers(pageFromUrl, sizeFromUrl);
+    }, [pageFromUrl, sizeFromUrl]);
 
-    const fetchUsers = async () => {
+    const fetchUsers = async (page, size) => {
         try {
             setLoading(true);
-            const data = await getAllUsers(currentPage, 10);
-            console.log("👥 Users data:", data);
-            setUsers(data.content || data || []);
+            const data = await getAllUsers(page, size);
+            setUsers(Array.isArray(data.content) ? data.content : []);
             setTotalPages(data.totalPages || 1);
         } catch (error) {
             console.error("❌ Failed to fetch users:", error);
-            console.warn("⚠️ Backend chưa có API GET /users?page=1&size=10");
             setUsers([]);
         } finally {
             setLoading(false);
@@ -32,7 +34,7 @@ const AdminUsersPage = () => {
             try {
                 await deleteUser(userId);
                 alert("Xóa người dùng thành công!");
-                fetchUsers();
+                fetchUsers(pageFromUrl, sizeFromUrl);
             } catch (error) {
                 console.error("Failed to delete user:", error);
                 alert("Xóa người dùng thất bại!");
@@ -108,9 +110,9 @@ const AdminUsersPage = () => {
             {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-2 mt-6">
                     <button
-                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        className={`px-4 py-2 rounded ${currentPage === 1
+                        onClick={() => setSearchParams({ page: Math.max(1, pageFromUrl - 1), size: sizeFromUrl })}
+                        disabled={pageFromUrl === 1}
+                        className={`px-4 py-2 rounded ${pageFromUrl === 1
                                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                 : 'bg-white border hover:bg-gray-50'
                             }`}
@@ -118,12 +120,12 @@ const AdminUsersPage = () => {
                         ← Trước
                     </button>
                     <span className="px-4 py-2 text-sm text-gray-600">
-                        Trang {currentPage} / {totalPages}
+                        Trang {pageFromUrl} / {totalPages}
                     </span>
                     <button
-                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                        className={`px-4 py-2 rounded ${currentPage === totalPages
+                        onClick={() => setSearchParams({ page: Math.min(totalPages, pageFromUrl + 1), size: sizeFromUrl })}
+                        disabled={pageFromUrl === totalPages}
+                        className={`px-4 py-2 rounded ${pageFromUrl === totalPages
                                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                 : 'bg-white border hover:bg-gray-50'
                             }`}
@@ -132,6 +134,21 @@ const AdminUsersPage = () => {
                     </button>
                 </div>
             )}
+
+            {/* Chọn số lượng trên mỗi trang */}
+            <div className="flex justify-end items-center mt-4">
+                <label className="mr-2 text-sm text-gray-600">Hiển thị mỗi trang:</label>
+                <select
+                    value={sizeFromUrl}
+                    onChange={e => setSearchParams({ page: 1, size: e.target.value })}
+                    className="px-2 py-1 border rounded"
+                >
+                    <option value={3}>3</option>
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                </select>
+            </div>
         </div>
     );
 };

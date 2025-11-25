@@ -1,27 +1,31 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getCourses, deleteCourse } from "../../services/courseService";
 
 const AdminCoursesPage = () => {
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [pageSize] = useState(10);
+    // Lấy page từ query param, mặc định là 1
+    const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
 
+    // Khi pageFromUrl thay đổi, fetch dữ liệu
     useEffect(() => {
-        fetchCourses();
-    }, [currentPage]);
+        fetchCourses(pageFromUrl);
+    }, [pageFromUrl]);
 
-    const fetchCourses = async () => {
+    const fetchCourses = async (page) => {
         try {
             setLoading(true);
-            const data = await getCourses(currentPage, pageSize);
-            setCourses(data.content || []);
+            const data = await getCourses(page, pageSize);
+            setCourses(Array.isArray(data.content) ? data.content : []);
             setTotalPages(data.totalPages || 1);
         } catch (error) {
             console.error("Failed to fetch courses:", error);
+            setCourses([]);
         } finally {
             setLoading(false);
         }
@@ -32,7 +36,7 @@ const AdminCoursesPage = () => {
             try {
                 await deleteCourse(courseId);
                 alert("Xóa khóa học thành công!");
-                fetchCourses(); // Refresh list
+                fetchCourses(pageFromUrl); // Refresh list
             } catch (error) {
                 console.error("Failed to delete course:", error);
                 alert("Xóa khóa học thất bại!");
@@ -115,9 +119,9 @@ const AdminCoursesPage = () => {
             {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-2 mt-6">
                     <button
-                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        className={`px-4 py-2 rounded ${currentPage === 1
+                        onClick={() => setSearchParams({ page: Math.max(1, pageFromUrl - 1) })}
+                        disabled={pageFromUrl === 1}
+                        className={`px-4 py-2 rounded ${pageFromUrl === 1
                                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                 : 'bg-white border hover:bg-gray-50'
                             }`}
@@ -126,13 +130,13 @@ const AdminCoursesPage = () => {
                     </button>
 
                     <span className="px-4 py-2 text-sm text-gray-600">
-                        Trang {currentPage} / {totalPages}
+                        Trang {pageFromUrl} / {totalPages}
                     </span>
 
                     <button
-                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                        className={`px-4 py-2 rounded ${currentPage === totalPages
+                        onClick={() => setSearchParams({ page: Math.min(totalPages, pageFromUrl + 1) })}
+                        disabled={pageFromUrl === totalPages}
+                        className={`px-4 py-2 rounded ${pageFromUrl === totalPages
                                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                 : 'bg-white border hover:bg-gray-50'
                             }`}
