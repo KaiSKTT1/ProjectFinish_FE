@@ -122,8 +122,8 @@ const AdminCoursesPage = () => {
                         onClick={() => setSearchParams({ page: Math.max(1, pageFromUrl - 1) })}
                         disabled={pageFromUrl === 1}
                         className={`px-4 py-2 rounded ${pageFromUrl === 1
-                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                : 'bg-white border hover:bg-gray-50'
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            : 'bg-white border hover:bg-gray-50'
                             }`}
                     >
                         ← Trước
@@ -137,8 +137,8 @@ const AdminCoursesPage = () => {
                         onClick={() => setSearchParams({ page: Math.min(totalPages, pageFromUrl + 1) })}
                         disabled={pageFromUrl === totalPages}
                         className={`px-4 py-2 rounded ${pageFromUrl === totalPages
-                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                : 'bg-white border hover:bg-gray-50'
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            : 'bg-white border hover:bg-gray-50'
                             }`}
                     >
                         Sau →

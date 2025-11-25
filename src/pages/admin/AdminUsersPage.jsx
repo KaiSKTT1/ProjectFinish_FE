@@ -74,8 +74,8 @@ const AdminUsersPage = () => {
                                     <td className="px-6 py-4 text-sm text-gray-500">{user.email || 'N/A'}</td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'ADMIN'
-                                                ? 'bg-red-100 text-red-800'
-                                                : 'bg-blue-100 text-blue-800'
+                                            ? 'bg-red-100 text-red-800'
+                                            : 'bg-blue-100 text-blue-800'
                                             }`}>
                                             {user.role || 'USER'}
                                         </span>
@@ -113,8 +113,8 @@ const AdminUsersPage = () => {
                         onClick={() => setSearchParams({ page: Math.max(1, pageFromUrl - 1), size: sizeFromUrl })}
                         disabled={pageFromUrl === 1}
                         className={`px-4 py-2 rounded ${pageFromUrl === 1
-                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                : 'bg-white border hover:bg-gray-50'
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            : 'bg-white border hover:bg-gray-50'
                             }`}
                     >
                         ← Trước
@@ -126,8 +126,8 @@ const AdminUsersPage = () => {
                         onClick={() => setSearchParams({ page: Math.min(totalPages, pageFromUrl + 1), size: sizeFromUrl })}
                         disabled={pageFromUrl === totalPages}
                         className={`px-4 py-2 rounded ${pageFromUrl === totalPages
-                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                : 'bg-white border hover:bg-gray-50'
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            : 'bg-white border hover:bg-gray-50'
                             }`}
                     >
                         Sau →
