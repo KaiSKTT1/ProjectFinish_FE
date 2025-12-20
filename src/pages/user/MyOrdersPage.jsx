@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { getAllOrders, getOrderDetailCourses } from "../../services/orderService";
+import { getMyOrders, getOrderDetailCourses } from "../../services/orderService";
 
-const AdminOrdersPage = () => {
+const MyOrdersPage = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -9,14 +9,14 @@ const AdminOrdersPage = () => {
     const [loadingDetail, setLoadingDetail] = useState(false);
 
     useEffect(() => {
-        fetchOrders();
+        fetchMyOrders();
     }, []);
 
-    const fetchOrders = async () => {
+    const fetchMyOrders = async () => {
         try {
             setLoading(true);
-            const data = await getAllOrders();
-            console.log("🛍️ Orders data:", data);
+            const data = await getMyOrders();
+            console.log("🛍️ My orders data:", data);
             setOrders(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("❌ Failed to fetch orders:", error);
@@ -43,7 +43,6 @@ const AdminOrdersPage = () => {
     const handleViewDetail = async (order) => {
         console.log('📦 Viewing order detail:', order);
 
-        // Tìm orderId - có thể là order.id hoặc order.orderId
         const orderId = order.id || order.orderId;
         console.log('🔑 Order ID:', orderId);
 
@@ -51,7 +50,6 @@ const AdminOrdersPage = () => {
 
         if (!orderId) {
             console.warn('⚠️ Order ID not found, using courses from order object');
-            // Nếu không có orderId, dùng courses từ order object
             setDetailCourses(Array.isArray(order.courses) ? order.courses : []);
             return;
         }
@@ -64,7 +62,6 @@ const AdminOrdersPage = () => {
             setDetailCourses(Array.isArray(courses) ? courses : []);
         } catch (error) {
             console.error('❌ Failed to fetch order details:', error);
-            // Fallback: dùng courses từ order object
             console.log('📌 Using courses from order object as fallback');
             setDetailCourses(Array.isArray(order.courses) ? order.courses : []);
         } finally {
@@ -80,73 +77,94 @@ const AdminOrdersPage = () => {
     if (loading) {
         return (
             <div className="text-center py-12">
-                <p className="text-xl text-gray-600">Đang tải...</p>
+                <p className="text-xl text-gray-600">Đang tải đơn hàng...</p>
             </div>
         );
     }
 
     return (
-        <div>
-            <h1 className="text-3xl font-bold mb-6">Quản lý đơn hàng</h1>
+        <div className="container mx-auto px-4 py-8">
+            <h1 className="text-3xl font-bold mb-6">Đơn hàng của tôi</h1>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-                <table className="w-full">
-                    <thead className="bg-gray-50 border-b">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Người mua</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Số khóa học</th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Tổng tiền</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ngày tạo</th>
-                            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                        {orders.length > 0 ? (
-                            orders.map((order, index) => (
-                                <tr key={index} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4">
-                                        <div className="text-sm font-medium text-gray-900">
-                                            {order.user?.username || 'N/A'}
-                                        </div>
-                                        <div className="text-sm text-gray-500">
-                                            {order.user?.firstName} {order.user?.lastName}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">
-                                        {order.courses?.length || 0} khóa học
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-right font-medium text-gray-900">
-                                        {order.amount?.toLocaleString('vi-VN')} đ
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {getStatusBadge(order.statusOrder)}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-500">
+            {orders.length > 0 ? (
+                <div className="space-y-4">
+                    {orders.map((order, index) => (
+                        <div key={index} className="bg-white rounded-lg shadow-md p-6">
+                            {/* Header */}
+                            <div className="flex justify-between items-start mb-4 pb-4 border-b">
+                                <div>
+                                    <p className="text-sm text-gray-500">Ngày đặt hàng</p>
+                                    <p className="text-sm font-medium">
                                         {order.createAt ? new Date(order.createAt).toLocaleString('vi-VN') : 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        <button
-                                            onClick={() => handleViewDetail(order)}
-                                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-                                        >
-                                            👁️ Chi tiết
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="5" className="px-6 py-8 text-center">
-                                    <div className="text-gray-500">
-                                        <p className="text-xl mb-2">📦 Không có đơn hàng nào</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-sm text-gray-500 mb-1">Trạng thái</p>
+                                    {getStatusBadge(order.statusOrder)}
+                                </div>
+                            </div>
+
+                            {/* Courses List */}
+                            <div className="mb-4">
+                                <p className="text-sm font-semibold text-gray-700 mb-2">
+                                    Khóa học ({order.courses?.length || 0})
+                                </p>
+                                <div className="space-y-2">
+                                    {order.courses?.map((course, idx) => (
+                                        <div key={idx} className="flex items-center gap-3 p-3 bg-gray-50 rounded">
+                                            <span className="text-2xl">📚</span>
+                                            <div className="flex-1">
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {course.name || `Khóa học #${course.id?.substring(0, 8)}`}
+                                                </p>
+                                                {course.description && (
+                                                    <p className="text-xs text-gray-500">
+                                                        {course.description}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Footer */}
+                            <div className="pt-4 border-t space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <p className="text-sm text-gray-600">
+                                        Tổng cộng
+                                    </p>
+                                    <p className="text-xl font-bold text-blue-600">
+                                        {order.amount?.toLocaleString('vi-VN')} đ
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => handleViewDetail(order)}
+                                    className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                >
+                                    👁️ Xem chi tiết khóa học
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="bg-white rounded-lg shadow-md p-12 text-center">
+                    <span className="text-6xl mb-4 block">📦</span>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                        Chưa có đơn hàng nào
+                    </h2>
+                    <p className="text-gray-600 mb-6">
+                        Bạn chưa mua khóa học nào. Hãy khám phá và chọn khóa học phù hợp với bạn!
+                    </p>
+                    <a
+                        href="/courses"
+                        className="inline-block px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium"
+                    >
+                        Xem khóa học
+                    </a>
+                </div>
+            )}
 
             {/* Modal chi tiết order */}
             {selectedOrder && (
@@ -163,11 +181,6 @@ const AdminOrdersPage = () => {
                         <div className="mb-4 p-4 bg-gray-50 rounded">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-sm text-gray-500">Người mua</p>
-                                    <p className="font-medium">{selectedOrder.user?.username}</p>
-                                    <p className="text-sm text-gray-600">{selectedOrder.user?.firstName} {selectedOrder.user?.lastName}</p>
-                                </div>
-                                <div>
                                     <p className="text-sm text-gray-500">Trạng thái</p>
                                     {getStatusBadge(selectedOrder.statusOrder)}
                                 </div>
@@ -175,7 +188,7 @@ const AdminOrdersPage = () => {
                                     <p className="text-sm text-gray-500">Tổng tiền</p>
                                     <p className="font-bold text-lg text-blue-600">{selectedOrder.amount?.toLocaleString('vi-VN')} đ</p>
                                 </div>
-                                <div>
+                                <div className="col-span-2">
                                     <p className="text-sm text-gray-500">Ngày tạo</p>
                                     <p className="font-medium">{selectedOrder.createAt ? new Date(selectedOrder.createAt).toLocaleString('vi-VN') : 'N/A'}</p>
                                 </div>
@@ -184,17 +197,17 @@ const AdminOrdersPage = () => {
 
                         {/* Danh sách khóa học chi tiết */}
                         <div>
-                            <h3 className="text-lg font-semibold mb-3">Khóa học ({detailCourses.length})</h3>
+                            <h3 className="text-lg font-semibold mb-3">Khóa học chi tiết ({detailCourses.length})</h3>
                             {loadingDetail ? (
                                 <p className="text-center py-4 text-gray-500">Đang tải...</p>
                             ) : (
                                 <div className="space-y-3">
                                     {detailCourses.map((course, idx) => (
-                                        <div key={idx} className="border rounded-lg p-4 hover:bg-gray-50">
+                                        <div key={idx} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                                             <div className="flex items-start gap-3">
                                                 <span className="text-3xl">📚</span>
                                                 <div className="flex-1">
-                                                    <h4 className="font-medium text-gray-900">{course.name || 'Không có tên'}</h4>
+                                                    <h4 className="font-medium text-gray-900 text-lg">{course.name || 'Không có tên'}</h4>
                                                     <p className="text-sm text-gray-600 mt-1">{course.description || 'Không có mô tả'}</p>
                                                     {course.category && (
                                                         <span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
@@ -212,7 +225,7 @@ const AdminOrdersPage = () => {
                         <div className="mt-6 flex justify-end">
                             <button
                                 onClick={handleCloseModal}
-                                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                                className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
                             >
                                 Đóng
                             </button>
@@ -224,4 +237,4 @@ const AdminOrdersPage = () => {
     );
 };
 
-export default AdminOrdersPage;
+export default MyOrdersPage;

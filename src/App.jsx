@@ -19,6 +19,8 @@ import CoursesPage from './pages/user/CoursesPage.jsx'
 import CoursesOfCategory from './pages/user/CoursesOfCategory.jsx'
 import CartPage from './pages/user/CartPage.jsx'
 import MyCoursesPage from './pages/user/MyCoursesPage.jsx'
+import MyOrdersPage from './pages/user/MyOrdersPage.jsx'
+import ProfilePage from './pages/user/ProfilePage.jsx'
 
 const App = () => {
   return (
@@ -43,6 +45,12 @@ const App = () => {
 
           {/* Trang khóa học của tôi */}
           <Route path="my-courses" element={<MyCoursesPage />} />
+
+          {/* Trang đơn hàng của tôi */}
+          <Route path="my-orders" element={<MyOrdersPage />} />
+
+          {/* Trang cá nhân */}
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
 
         {/* Trang login user - AuthLayout */}

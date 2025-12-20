@@ -3,7 +3,7 @@ import Button from "../../components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCart } from "../../store/cartSlice";
-import { createOrder } from "../../services/orderService";
+import { createOrderFromCart } from "../../services/orderService";
 import { removeFromCart, clearCart } from "../../services/cartService";
 
 const CartPage = () => {
@@ -19,6 +19,7 @@ const CartPage = () => {
 
     const [total, setTotal] = useState(0);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState('BANK_TRANSFER'); // Mặc định chuyển khoản
 
     // Load cart từ Redux khi component mount
     useEffect(() => {
@@ -92,22 +93,24 @@ const CartPage = () => {
         try {
             setIsProcessing(true);
 
-            // Lấy danh sách course IDs từ cart (lưu ý: data từ API có structure {course: {...}})
-            const courseIds = cartItems.map(item => item.course?.id);
-            console.log('Creating order with course IDs:', courseIds);
+            // Tạo OrderRequest theo format backend (backend tự lấy cart từ user token)
+            const orderRequest = {
+                notes: "Đơn hàng từ giỏ hàng",
+                statusPayment: paymentMethod // PAYPAL, BANK_TRANSFER, hoặc CASH
+            };
 
-            // Gọi API tạo đơn hàng
-            const order = await createOrder(courseIds);
+            console.log('Creating order from cart with request:', orderRequest);
+            const order = await createOrderFromCart(orderRequest);
             console.log('Order created:', order);
 
             // Thông báo thành công
             alert(`✅ Mua hàng thành công!\n\nBạn đã mua ${cartItems.length} khóa học.\nTổng: ${total.toLocaleString('vi-VN')}đ\n\nĐơn hàng #${order.id || 'XXX'}`);
 
-            // Clear cart sau khi thanh toán thành công
-            await handleClearCart();
+            // Refresh cart từ server (backend có thể đã tự xóa cart)
+            dispatch(fetchCart());
 
-            // Navigate đến trang "Khóa học của tôi"
-            navigate('/my-courses');
+            // Navigate đến trang cá nhân để xem khóa học đã mua
+            navigate('/profile');
 
         } catch (error) {
             console.error('Checkout error:', error);
@@ -259,6 +262,22 @@ const CartPage = () => {
                                         </span>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* Payment Method Selection */}
+                            <div className="mb-6 pb-6 border-b">
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Phương thức thanh toán
+                                </label>
+                                <select
+                                    value={paymentMethod}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option value="BANK_TRANSFER">🏦 Chuyển khoản ngân hàng</option>
+                                    <option value="PAYPAL">💳 PayPal</option>
+                                    <option value="CASH">💵 Tiền mặt</option>
+                                </select>
                             </div>
 
                             <div className="space-y-3">

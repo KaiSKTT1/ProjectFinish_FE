@@ -19,3 +19,14 @@ export const deleteUser = async (userId) => {
     const response = await api.delete(`/users/${userId}`);
     return response.data;
 }
+
+// Lấy thông tin user hiện tại (GET /users/myInfo)
+export const getMyInfo = async () => {
+    try {
+        const response = await api.get('/users/myInfo');
+        return response.data.result || response.data;
+    } catch (error) {
+        console.error('Error fetching my info:', error);
+        throw error;
+    }
+}

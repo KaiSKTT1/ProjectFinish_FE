@@ -106,6 +106,7 @@ const Header = () => {
                                 </span>
                             )}
                         </div>
+                        <Button title="Trang cá nhân" onClick={() => navigate('/profile')} />
                         <Button title="Logout" onClick={handleLogoutClick} />
                     </>
                 ) : (

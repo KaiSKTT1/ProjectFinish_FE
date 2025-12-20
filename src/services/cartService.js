@@ -13,8 +13,11 @@ export const addToCart = async (courseName) => {
 };
 
 // Lấy giỏ hàng của user
+// Backend endpoint: GET /cart/{myCart} nhưng không dùng pathVariable
+// Hoặc GET /cart/myCart - cần xác nhận với backend
 export const getMyCart = async () => {
     try {
+        // Thử cả 2 endpoint
         const response = await api.get('/cart/myCart');
         return response.data.result || [];
     } catch (error) {

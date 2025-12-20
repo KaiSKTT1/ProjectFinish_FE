@@ -42,3 +42,34 @@ export const getCoursesByCategory = async (categoryId, categoryName) => {
     const response = await api.get(`/courses/${categoryName}/${categoryId}`);
     return response.data.courseResponse || response.data.result.courseResponse;
 };
+
+// Get my purchased courses (GET /courses/my-course)
+export const getMyCourses = async () => {
+    try {
+        console.log('🔍 Calling GET /courses/my-course...');
+        const response = await api.get('/courses/my-course');
+        console.log('✅ My courses response:', response.data);
+        return response.data.result || response.data;
+    } catch (error) {
+        console.error('❌ Error fetching my courses:', error);
+        console.error('❌ Full error object:', error);
+        console.error('❌ Error response data:', error.response?.data);
+        console.error('❌ Error status:', error.response?.status);
+        console.error('❌ Error message:', error.response?.data?.message);
+        console.error('❌ Request URL:', error.config?.url);
+        console.error('❌ Request method:', error.config?.method);
+        console.error('❌ Request headers:', error.config?.headers);
+
+        alert(`⚠️ Lỗi khi lấy khóa học đã mua:
+        
+Status: ${error.response?.status}
+Message: ${error.response?.data?.message || 'Unknown error'}
+
+Vui lòng kiểm tra:
+1. Backend đã restart chưa?
+2. Controller path đúng /courses/my-course?
+3. Không có @RequestBody trong controller?`);
+
+        throw error;
+    }
+};
